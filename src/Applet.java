@@ -1,5 +1,6 @@
 import processing.core.PApplet;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Applet extends PApplet {
@@ -12,7 +13,11 @@ public class Applet extends PApplet {
     private final int background=color(128, 186, 36);
     private final int color1=color(74, 92, 102);
     private final int color2=color(184, 0, 64);
-    Ball ball1=new Ball();
+    ArrayList<Ball> balls=new ArrayList<>();
+
+    public Applet() {
+        balls.add(new Ball());
+    }
 
     @Override
     public void settings() {
@@ -30,23 +35,47 @@ public class Applet extends PApplet {
     public void draw() {
         fill(background);
         rect(0,0,sizeX,sizeY);
-        ball1.draw();
+        for (var ball:balls) {
+            ball.draw();
+        }
+    }
+
+    @Override
+    public void mouseClicked() {
+        /*boolean flag=false;
+        for (var ball:balls) {
+            float x=ball.x;
+            float y=ball.y;
+            int r=ball.r;
+            if(x-r>=mouseX&&x+r<=mouseX&&y-r>=mouseY&&y+r<=mouseY) {
+                ball.rand();
+                flag=true;
+                break;
+            }
+        }
+        if (!flag) {
+            balls.add(new Ball());
+        }*/
+        balls.add(new Ball());
     }
 
     class Ball{
+        //TODO sometimes balls don't change color?
         private static final Random random=new Random();
         private final int Rad;
         private final int r;
         private float x;
         private float y;
         private int color=color1;
-        private final int m;
+        private float m;
         private boolean positiveX;
         private boolean positiveY;
-        private final float speed;
+        private float speed;
         /*Thread collision;
 
         public Ball() {
+            this.Rad=random.nextInt(10,50);
+            this.r=Rad/2;
             this.x =random.nextFloat(r,sizeX-r);
             this.y =random.nextFloat(r,sizeY-r);
             this.m =(int)(random.nextInt(0,11));
@@ -89,11 +118,11 @@ public class Applet extends PApplet {
         }*/
 
         public Ball() {
-            this.Rad=random.nextInt(10,50);
+            this.Rad=random.nextInt(16,50);
             this.r=Rad/2;
             this.x =random.nextFloat(r,sizeX-r);
             this.y =random.nextFloat(r,sizeY-r);
-            this.m =(random.nextInt(0,11));
+            this.m =(random.nextFloat(0,10));
             this.positiveX =random.nextBoolean();
             this.positiveY =random.nextBoolean();
             this.speed=random.nextFloat(0.5f,2f);
@@ -120,6 +149,7 @@ public class Applet extends PApplet {
                 snap(false, true);
             }
         }
+
         private void draw(){
             fill(color);
             ellipse(x,y, Rad, Rad);
@@ -128,12 +158,19 @@ public class Applet extends PApplet {
 
         private void changeColor(){
             if(get((int) x, (int) y)==color1) color=color2;
-            else if(get((int) x, (int) y)==color2)color=color1;
+            else if(get((int) x, (int) y)==color2) color=color1;
         }
+
         private void snap(boolean isX, boolean isPositive){
             if(isX) x=isPositive?sizeX-r:r;
             else    y=isPositive?sizeY-r:r;
         }
 
+        /*public void rand() {
+            this.m =(random.nextFloat(0,10));
+            this.positiveX =random.nextBoolean();
+            this.positiveY =random.nextBoolean();
+            this.speed=random.nextFloat(0.5f,2f);
+        }*/
     }
 }
