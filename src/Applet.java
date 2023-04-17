@@ -9,7 +9,6 @@ public class Applet extends PApplet {
     }
     private static final int sizeX=800;
     private static final int sizeY=600;
-    private static final int rad=20;
     private final int background=color(128, 186, 36);
     private final int color1=color(74, 92, 102);
     private final int color2=color(184, 0, 64);
@@ -24,7 +23,7 @@ public class Applet extends PApplet {
     public void setup() {
         background(background);
         noStroke();
-        //smooth();
+        smooth();
     }
 
     @Override
@@ -36,48 +35,104 @@ public class Applet extends PApplet {
 
     class Ball{
         private static final Random random=new Random();
-        private float x=random(rad,sizeX-rad);
-        private float y=random(rad,sizeY-rad);
+        private final int Rad;
+        private final int r;
+        private float x;
+        private float y;
         private int color=color1;
-        private final int m=(int)random(0,10);
-        private boolean positiveX=random.nextBoolean();
-        private boolean positiveY=random.nextBoolean();
-        private final float speed=random(0.1f,1);
+        private final int m;
+        private boolean positiveX;
+        private boolean positiveY;
+        private final float speed;
+        /*Thread collision;
 
         public Ball() {
-            Thread collision=new Thread(new Runnable() {
+            this.x =random.nextFloat(r,sizeX-r);
+            this.y =random.nextFloat(r,sizeY-r);
+            this.m =(int)(random.nextInt(0,11));
+            this.positiveX =random.nextBoolean();
+            this.positiveY =random.nextBoolean();
+            this.speed=random.nextFloat(0.5f,2f);
+            collision =new Thread(new Runnable() {
                 private void changeColor(){
                     if(get((int) x, (int) y)==color1) color=color2;
-                    else color=color1;
+                    else if(get((int) x, (int) y)==color2)color=color1;
+                }
+                private void snap(boolean isX, boolean isPositive){
+                    if(isX) x=isPositive?sizeX-r:r;
+                    else    y=isPositive?sizeY-r:r;
                 }
                 @Override
                 public void run() {
-                    if(x<=rad||x>=sizeX-rad) {
-                        positiveX=!positiveX;
-                        changeColor();
+                    while (true) {
+                        if(x<=r) {
+                            positiveX=!positiveX;
+                            changeColor();
+                            snap(true, false);
+                        } else if(x>=sizeX-r) {
+                            positiveX=!positiveX;
+                            changeColor();
+                            snap(true, true);
+                        }else if(y<=r) {
+                            positiveY=!positiveY;
+                            changeColor();
+                            snap(false, false);
+                        }else if(y>=sizeY-r) {
+                            positiveY = !positiveY;
+                            changeColor();
+                            snap(false, true);
+                        }
                     }
-                    if(y<=rad||y>=sizeY-rad){
-                        positiveY=!positiveY;
-                        changeColor();
-                    }
-                    /*try {
-                        Thread.sleep(5);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }*/
                 }
             },"collision");
             collision.start();
+        }*/
+
+        public Ball() {
+            this.Rad=random.nextInt(10,50);
+            this.r=Rad/2;
+            this.x =random.nextFloat(r,sizeX-r);
+            this.y =random.nextFloat(r,sizeY-r);
+            this.m =(random.nextInt(0,11));
+            this.positiveX =random.nextBoolean();
+            this.positiveY =random.nextBoolean();
+            this.speed=random.nextFloat(0.5f,2f);
         }
 
         private void move(){
-            x=positiveX?(x+1)*speed:(x-1)*speed;
-            y=positiveY?(y+m)*speed:(y-m)*speed;
+            x=positiveX? x+1*speed : x-1*speed;
+            y=positiveY? y+m*speed : y-m*speed;
+            if(x<=r) {
+                positiveX=!positiveX;
+                changeColor();
+                snap(true, false);
+            } else if(x>=sizeX-r) {
+                positiveX=!positiveX;
+                changeColor();
+                snap(true, true);
+            }else if(y<=r) {
+                positiveY=!positiveY;
+                changeColor();
+                snap(false, false);
+            }else if(y>=sizeY-r) {
+                positiveY = !positiveY;
+                changeColor();
+                snap(false, true);
+            }
         }
         private void draw(){
             fill(color);
-            ellipse(x,y,rad,rad);
+            ellipse(x,y, Rad, Rad);
             move();
+        }
+
+        private void changeColor(){
+            if(get((int) x, (int) y)==color1) color=color2;
+            else if(get((int) x, (int) y)==color2)color=color1;
+        }
+        private void snap(boolean isX, boolean isPositive){
+            if(isX) x=isPositive?sizeX-r:r;
+            else    y=isPositive?sizeY-r:r;
         }
 
     }
